@@ -4,8 +4,26 @@ const parseInput = (rawInput) => rawInput.split('\n').map(s => s.trim());
 
 const part1 = (rawInput) => {
     const input = parseInput(rawInput);
-    const numbers = input[0].split(',').map(Number);
+    const numbers = parseNumbers(input);
+    let boards = parseBoards(input);
+    boards = solveBoards(numbers, boards);
 
+    boards = boards.sort((a,b) => { return a.winOrder < b.winOrder ? -1 : 1 });
+
+    return countRemaining(boards[0]) * boards[0].drawn;
+};
+
+const part2 = (rawInput) => {
+    const input = parseInput(rawInput);
+
+    return;
+};
+
+const parseNumbers = (input) => {
+    return input[0].split(',').map(Number);
+}
+
+const parseBoards = (input) => {
     const boards = [];
     let board, row;
 
@@ -13,7 +31,7 @@ const part1 = (rawInput) => {
     for (let i = 1; i < input.length; i++) {
         // initialize new board
         if (input[i] === '') {
-            board = {cols: [], rows: []};
+            board = {cols: [], rows: [], winOrder: NaN, drawn: NaN};
             boards.push(board);
             continue;
         }
@@ -29,53 +47,62 @@ const part1 = (rawInput) => {
         }
     }
 
-    let drawn, winner;
+    return boards;
+}
+
+
+const solveBoards = (numbers, boards) => {
+    let drawn;
+    let winOrder = -1;
     let remainingSum = 0;
     // apply drawn numbers
     for (let n = 0; n < numbers.length; n++) {
         drawn = numbers[n];
         // remove number from every board
         for (let b = 0; b < boards.length; b++) {
-            winner = false;
+            // don't change a board after it won
+            if (boards[b].winOrder >= 0) {
+                continue;
+            }
+
             boards[b].rows.forEach((r, i) => {
                 boards[b].rows[i] = r.filter(v => v != drawn);
                 if (!boards[b].rows[i].length) {
-                    winner = true;
+                    winOrder++;
+                    boards[b].winOrder = winOrder
+                    boards[b].drawn = drawn;
                 }
             });
+
+            // ignore cols if just won by rows
+            if (boards[b].winOrder >= 0) {
+                continue;
+            }
 
             boards[b].cols.forEach((r, i) => {
                 boards[b].cols[i] = r.filter(v => v != drawn);
                 if (!boards[b].cols[i].length) {
-                    winner = true;
+                    winOrder++;
+                    boards[b].winOrder = winOrder;
+                    boards[b].drawn = drawn;
                 }
             });
-
-            // test winning condition
-            if (winner) {
-                remainingSum = 0;
-                // somebody just reached length === 0
-                boards[b].rows.forEach(r => {
-                    r.forEach(p => {
-                        remainingSum += p;
-                    });
-                });
-                return remainingSum * drawn;
-            }
         }
-
     }
 
+    return boards;
+}
 
-    exit;
-    return 12;
-};
-
-const part2 = (rawInput) => {
-    const input = parseInput(rawInput);
-
-    return;
-};
+const countRemaining = (board) => {
+        let sum = 0;
+        // somebody just reached length === 0
+        board.rows.forEach(r => {
+            r.forEach(p => {
+                sum += p;
+            });
+        });
+        return sum;
+}
 
 run({
     part1: {
