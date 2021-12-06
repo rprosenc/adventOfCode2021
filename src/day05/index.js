@@ -100,6 +100,19 @@ const print = (map) => {
     }
 }
 
+const cnt = (map) => {
+    let sum = 0;
+    for (let i = 0; i < map.length; i++) {
+        for (let j = 0; j < map[i].length; j++) {
+            if (map[i][j] > 1) {
+                sum++;
+            }
+        }
+    }
+
+    return sum;
+}
+
 const part1 = (rawInput) => {
     const input = parseInput(rawInput);
     let overlaps = 0;
@@ -116,11 +129,11 @@ const part1 = (rawInput) => {
         }
     }
 
-    if (map.length < 50) {
+    if (map.length < 80) {
         print(map);
     }
 
-    return overlaps;
+    return cnt(map);
 };
 
 const part2 = (rawInput) => {
