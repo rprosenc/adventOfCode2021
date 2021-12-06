@@ -1,6 +1,6 @@
 import run from "aocrunner";
 
-const parseInput = (rawInput) => rawInput.split('\n').map(s=>s.trim());
+const parseInput = (rawInput) => rawInput.split("\n").map((s) => s.trim());
 
 const part1 = (rawInput) => {
   const input = parseInput(rawInput);
@@ -8,15 +8,15 @@ const part1 = (rawInput) => {
   let depth = 0;
   let position = 0;
   let command, value;
-  for(var i=0; i<input.length; i++) {
-    [command, value] = input[i].split(' ');
-    if (command === 'forward') {
+  for (var i = 0; i < input.length; i++) {
+    [command, value] = input[i].split(" ");
+    if (command === "forward") {
       position += Number(value);
     }
-    if (command === 'down') {
+    if (command === "down") {
       depth += Number(value);
     }
-    if (command === 'up') {
+    if (command === "up") {
       depth -= Number(value);
     }
   }
@@ -30,22 +30,22 @@ const part2 = (rawInput) => {
   let depth = 0;
   let position = 0;
   let command, value;
-  for(var i=0; i<input.length; i++) {
-    [command, value] = input[i].split(' ');
+  for (var i = 0; i < input.length; i++) {
+    [command, value] = input[i].split(" ");
     value = Number(value);
-    if (command === 'forward') {
+    if (command === "forward") {
       position += value;
       depth += aim * value;
     }
-    if (command === 'down') {
+    if (command === "down") {
       aim += value;
     }
-    if (command === 'up') {
+    if (command === "up") {
       aim -= value;
     }
   }
 
-  console.log({depth, position})
+  console.log({ depth, position });
 
   return depth * position;
 };
@@ -53,25 +53,32 @@ const part2 = (rawInput) => {
 run({
   part1: {
     tests: [
-      { input: `forward 5
+      {
+        input: `forward 5
       down 5
       forward 8
       up 3
       down 8
-      forward 2`, expected: 150 },
+      forward 2`,
+        expected: 150,
+      },
     ],
     solution: part1,
   },
   part2: {
     tests: [
-      { input: `forward 5
+      {
+        input: `forward 5
       down 5
       forward 8
       up 3
       down 8
-      forward 2`, expected: 900 },
+      forward 2`,
+        expected: 900,
+      },
     ],
     solution: part2,
   },
   trimTestInputs: true,
+  onlyTests: false
 });
