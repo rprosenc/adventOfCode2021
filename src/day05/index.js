@@ -138,8 +138,24 @@ const part1 = (rawInput) => {
 
 const part2 = (rawInput) => {
     const input = parseInput(rawInput);
+    let overlaps = 0;
+    const map = initMap(input);
 
-    return;
+    let points;
+    for (let i = 0; i < input.length; i++) {
+        points = getPoints(input[i]);
+        for (let j = 0; j < points.length; j++) {
+            if (addPoint(map, points[j])) {
+                overlaps++;
+            }
+        }
+    }
+
+    if (map.length < 80) {
+        print(map);
+    }
+
+    return cnt(map);
 };
 
 run({
@@ -168,7 +184,16 @@ run({
     },
     part2: {
         tests: [
-            // { input: ``, expected: "" },
+            { input: `0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2`, expected: 12 },
         ],
         solution: part2,
     },
