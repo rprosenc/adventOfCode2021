@@ -55,17 +55,8 @@ const getPoints = (line) => {
     const [x2, y2] = line[1];
     const points = [];
 
-    const dir = [0, 0];
-    if (x1 < x2) {
-        dir[0] = 1; // direction to the right
-    } else if (x1 > x2) {
-        dir[0] = -1; // direction to the left
-    }
-    if (y1 < y2) {
-        dir[1] = 1; // direction down
-    } else if (y1 > y2) {
-        dir[1] = -1; // direction up
-    }
+    const v = [x2-x1, y2-y1];
+    const dir = [v[0] ? v[0]/Math.abs(v[0]) : 0, v[1] ? v[1]/Math.abs(v[1]) : 0];  // beware! no division by zero!
 
     let p = [x1, y1];
     points.push([x1, y1]);
