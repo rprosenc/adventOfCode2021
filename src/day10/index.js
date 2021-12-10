@@ -44,8 +44,60 @@ const part1 = (rawInput) => {
 
 const part2 = (rawInput) => {
     const input = parseInput(rawInput);
+    const openChars = '([{<'.split('');
+    const closingPairs = {
+        '(': ')',
+        '[': ']',
+        '{': '}',
+        '<': '>',
+    }
 
-    return;
+    const points = {
+        ')': 1,
+        ']': 2,
+        '}': 3,
+        '>': 4,
+    }
+
+    const illegalChars = [];
+    const incompleteLines = [];
+    const lineEndings = [];
+    const scores = [];
+    for (let i = 0; i < input.length; i++) {
+        // chunks stay local
+        const chunks = [];
+        let openChunk;
+        let lineIllegal = false;
+        for (let j = 0; j < input[i].length; j++) {
+            if (openChars.includes(input[i][j])) {
+                chunks.push(input[i][j]);
+                continue;
+            }
+
+            // must be closing character
+            // test against top most open chunk
+            openChunk = chunks.pop();
+            if (input[i][j] !== closingPairs[openChunk]) {
+                illegalChars.push(input[i][j]);
+                lineIllegal = true;
+                break;
+            }
+        }
+        if (!lineIllegal) {
+            incompleteLines.push(input[i]);
+            lineEndings.push(chunks.reverse().map(c=>closingPairs[c]));
+        }
+    }
+
+    for (let i = 0; i < lineEndings.length; i++) {
+        let score = 0;
+        for (let j = 0; j < lineEndings[i].length; j++) {
+            score *= 5;
+            score += points[lineEndings[i][j]];
+        }
+        scores.push(score);
+    }
+    return scores.sort((a,b)=>a<b?-1:1)[(scores.length-1)/2];
 };
 
 run({
@@ -68,7 +120,18 @@ run({
     },
     part2: {
         tests: [
-            // { input: ``, expected: "" },
+            {
+                input: `[({(<(())[]>[[{[]{<()<>>
+[(()[<>])]({[<{<<[]>>(
+{([(<{}[<>[]}>{[]{[(<()>
+(((({<>}<{<{<>}{[]{[]{}
+[[<[([]))<([[{}[[()]]]
+[{[{({}]{}}([{[{{{}}([]
+{<[[]]>}<{[{[{[]{()[[[]
+[<(<(<(<{}))><([]([]()
+<{([([[(<>()){}]>(<<{{
+<{([{{}}[<[[[<>{}]]]>[]]`, expected: 288957
+            },
         ],
         solution: part2,
     },
