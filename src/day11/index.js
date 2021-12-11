@@ -26,7 +26,7 @@ const Octopus = class {
         if (this.energy === 3) {
             color = chalk.rgb(30,30,40)
         }
-        return color('█');
+        return color('██');
     }
 
     addNeighbour(n) {
