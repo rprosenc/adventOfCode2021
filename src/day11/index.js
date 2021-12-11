@@ -1,7 +1,5 @@
 import run from "aocrunner";
-
-const Reset = "\x1b[0m";
-const Bright = "\x1b[1m";
+import chalk from 'chalk';
 
 const parseInput = (rawInput) => rawInput.split('\n').map(s => s.split('').map(d => Number(d)));
 
@@ -15,13 +13,20 @@ const Octopus = class {
     }
 
     print() {
-        if (this.energy > 10 || this.energy === 0) {
-            return Bright + 0 + Reset;
+        let color = chalk.rgb(25,25,25)
+        if (this.energy > 9 || this.energy === 0) {
+            color = chalk.rgb(255,255,255)
         }
-        if (this.energy === 10) {
-            return Bright + 'X' + Reset;  // for debugging purposes only
+        if (this.energy === 1) {
+            color = chalk.rgb(100,100,100)
         }
-        return this.energy;
+        if (this.energy === 2) {
+            color = chalk.rgb(50,50,60)
+        }
+        if (this.energy === 3) {
+            color = chalk.rgb(30,30,40)
+        }
+        return color('█');
     }
 
     addNeighbour(n) {
@@ -82,9 +87,12 @@ async function printMesh(mesh, step, flashes) {
 
     process.stdout.write('\x1Bc');  // clear terminal
     console.log('  Step', step, 'Flashes', flashes);
-    console.log(mesh.map(line => line.map(o => o.print()).join('')).join('\n'));
-    await sleep(10);
+    console.log('');
+    console.log('     ', mesh.map(line => line.map(o => o.print()).join('')).join('\n      '));
+    console.log('\n\n');
+    await sleep(50);
 }
+
 
 async function part1 (rawInput)  {
     const input = parseInput(rawInput);
@@ -110,7 +118,7 @@ async function part1 (rawInput)  {
         mesh.map(line=>line.map(o=>o.reset()));
 
         // activate for visual
-        //await printMesh(mesh, i, flashes);
+        await printMesh(mesh, i, flashes);
     }
 
     return flashes;
@@ -162,35 +170,35 @@ run({
 // 19991
 // 11111`, expected: ""
 //             },
-            {
-                input: `5483143223
-2745854711
-5264556173
-6141336146
-6357385478
-4167524645
-2176841721
-6882881134
-4846848554
-5283751526`, expected: 1656
-            },
+//             {
+//                 input: `5483143223
+// 2745854711
+// 5264556173
+// 6141336146
+// 6357385478
+// 4167524645
+// 2176841721
+// 6882881134
+// 4846848554
+// 5283751526`, expected: 1656
+//             },
         ],
         solution: part1,
     },
     part2: {
         tests: [
-            {
-                input: `5483143223
-2745854711
-5264556173
-6141336146
-6357385478
-4167524645
-2176841721
-6882881134
-4846848554
-5283751526`, expected: 195
-            },
+//             {
+//                 input: `5483143223
+// 2745854711
+// 5264556173
+// 6141336146
+// 6357385478
+// 4167524645
+// 2176841721
+// 6882881134
+// 4846848554
+// 5283751526`, expected: 195
+//             },
         ],
         solution: part2,
     },
