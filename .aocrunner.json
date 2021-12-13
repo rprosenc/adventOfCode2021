@@ -178,16 +178,18 @@
     },
     {
       "part1": {
-        "solved": false,
-        "result": null,
+        "solved": true,
+        "result": "735",
         "attempts": [],
-        "time": null
+        "time": 79.5
       },
       "part2": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
+        "solved": true,
+        "result": "UFRZKAUZ",
+        "attempts": [
+          "99"
+        ],
+        "time": 82.46
       }
     },
     {
