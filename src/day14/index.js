@@ -60,6 +60,8 @@ const part1 = (rawInput) => {
 
     const template = polymerize(startTemplate, rules, 10);
     const chars = countDict(template);
+
+    console.log(chars);
     return diffMinMax(chars);
 };
 
@@ -68,7 +70,7 @@ const part2 = (rawInput) => {
     const input = parseInput(rawInput);
     let template = [...input.template];
     const rules = input.rules;
-    const steps = 40;
+    const steps = 10;
     const map = {};
 
 
@@ -79,27 +81,32 @@ const part2 = (rawInput) => {
             values.push(pair[0] + char);
             values.push(char + pair[1]);
         }
-        return {cnt: 0, values, char}
+        return {cnt: 1, values, char}
     }
 
-    function countDeep(pair, depth) {
-        if (!depth) return;
-        if(depth === 30) process.stdout.write('.')
-
+    function addValue(pair) {
         if (!map[pair]) {
             map[pair] = mapValue(pair);
         }
-        map[pair].cnt++;
+        map[pair].cnt ++;
+    }
 
-        for (let i = 0; i < map[pair].values.length; i++) {
-            countDeep(map[pair].values[i], depth - 1);
+    // init map
+    for (let i = 0; i < template.length - 1; i++) {
+        let pair = template[i] + template[i + 1];
+        addValue(pair);
+    }
+
+    // iterate
+    for (let i = 0; i < steps+1; i++) {
+        const keys = Object.keys(map);
+        for (const key of keys) {
+            addValue(map[key].values[0]);
+            addValue(map[key].values[1]);
         }
     }
 
-    for (let i = 0; i < template.length - 1; i++) {
-        let pair = template[i] + template[i + 1];
-        countDeep(pair, steps);
-    }
+    console.log(map);
 
     const chars = {};
     for (const key of Object.keys(map)) {
@@ -114,7 +121,9 @@ const part2 = (rawInput) => {
     for (let i = 0; i < template.length; i++) {
         chars[template[i]]++;
     }
-
+console.log(chars);
+    console.log(diffMinMax(chars));
+    exit;
     return diffMinMax(chars);
 
 };
