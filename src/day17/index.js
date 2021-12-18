@@ -13,16 +13,20 @@ function print(field) {
     const buffer = [];
     const xMap = {};
     const yMap = {};
+    const ceil = 40;
+
+    const yMax = Math.min(field.yMax, ceil);
 
     let line, c, i=0, j=0;
     // baseline
-    for (let y = field.yMax; y >= field.yMin; y--) {
+
+    for (let y = yMax; y >= field.yMin; y--) {
         yMap[y] = i++;
         line = [(y+'').padStart(4, ' ') + ' '];
         j = 0;
         for (let x = field.xMin; x <= field.xMax; x++) {
             xMap[x] = j++;
-            c = chalk.hex('#333333')('▒');
+            c = ' '; //chalk.hex('#333333')('▒');
             if (
                 x >= field.target.xMin && x <= field.target.xMax &&
                 y >= field.target.yMin && y <= field.target.yMax
@@ -39,12 +43,19 @@ function print(field) {
 
     // paint tracers
     for (const probe of field.probes) {
-        let color = field.inTarget(probe) ? '#99FF99' : '#339999';
+        let colorTrace = field.inTarget(probe) ? '#99FF99' : '#339999';
+        // render trace
         for (let i = 0; i < probe.trace.length; i++) {
             x = xMap[probe.trace[i].x];
-            y = yMap[probe.trace[i].y];
-            buffer[y][x+1] = chalk.hex(color)('o');
+            y = yMap[Math.min(yMax, probe.trace[i].y)];
+            buffer[y][x+1] = chalk.hex(colorTrace)('o');
         }
+
+        // render aim
+        x = xMap[probe.vStart.x];
+        y = yMap[Math.min(yMax, probe.vStart.y)];
+        buffer[y][x+1] = chalk.hex('#FF6666')('X');
+
     }
 
     // add start
@@ -92,12 +103,13 @@ class Field {
         this.xMin = Math.min(0, target.xMin);
         this.xMax = Math.max(0, target.xMax);
         this.yMin = Math.min(0, target.yMin);
-        this.yMax = Math.max(0, target.yMax);
+        this.yMax = Math.max(100, target.yMax);
 
         this.probes = [];
     }
 
     simulate(probe) {
+        probe.reset();
         this.probes.push(probe);
         while (probe.y() >= this.target.yMin) {
             probe.step();
@@ -109,6 +121,15 @@ class Field {
             if (this.inTarget(probe)) {
                 break;
             }
+
+            // overshoot conditions:
+            if (this.target.xMin < 0 && probe.x() < this.target.xMin) {
+                break;
+            }
+            if (this.target.xMax > 0 && probe.x() > this.target.xMax) {
+                break;
+            }
+
         }
     }
 
@@ -128,6 +149,13 @@ class Probe {
         this.v = velocity; // Vector
         this.vStart = new Vector(velocity.x, velocity.y);
         this.p = position;
+        this.pStart = new Vector(position.x, position.y);
+        this.trace = [ ];
+    }
+
+    reset() {
+        this.v = new Vector(this.vStart.x, this.vStart.y);
+        this.p = new Vector(this.pStart.x, this.pStart.y);
         this.trace = [ ];
     }
 
@@ -172,19 +200,18 @@ async function animate(probes, target) {
     let highestY = target.yMin;
     let highestV = 0;
 
+    const success = [];
     for (let i = 0; i < probes.length; i++) {
         const field = new Field(target)
         field.simulate(probes[i]);
         if (field.inTarget(probes[i])) {
-            highestY = field.yMax;
-            highestV = probes[i].vStart.y;
+            success.push(probes[i]);
+            process.stdout.write('\x1Bc');  // clear terminal
+            console.log();
+            console.log('Successful: ' + success.length);
+            console.log(print(field));
+            await sleep(50);
         }
-
-        process.stdout.write('\x1Bc');  // clear terminal
-        console.log();
-        console.log('highest Y: ' + highestY, ', startV: ' + highestV);
-        console.log(print(field));
-        await sleep(250);
     }
 }
 
