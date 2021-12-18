@@ -239,15 +239,17 @@
     {
       "part1": {
         "solved": true,
-        "result": "6903",
+        "result": "1",
         "attempts": [],
-        "time": 94.91
+        "time": 0.02
       },
       "part2": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
+        "solved": true,
+        "result": "2351",
+        "attempts": [
+          "64"
+        ],
+        "time": 410.54
       }
     },
     {

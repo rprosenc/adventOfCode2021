@@ -63,7 +63,6 @@ function print(field) {
     y = yMap[0];
     buffer[y][x+1] = chalk.hex('#00FF00')('S');
 
-
     return buffer.map(l=>l.join('')).join('\n');
 }
 
@@ -219,7 +218,7 @@ async function part1(rawInput) {
     const target = parseInput(rawInput);
     const start =  new Vector(0, 0);
     const probes = [];
-    for (let i = 0; i < 400; i++) {
+    for (let i = 0; i < 120; i++) {
         probes.push(new Probe(start, new Vector(22,i)));
     }
 
@@ -233,19 +232,36 @@ async function part1(rawInput) {
             highestV = probes[i].vStart.y;
         }
     }
-    console.log('highest Y: ' + highestY, ', startV: ' + highestV);
-
-    // animate(probes);
+    animate(probes);
 
     return highestY;
 };
 
-const part2 = (rawInput) => {
-    const input = parseInput(rawInput);
+async function part2(rawInput) {
+    const target = parseInput(rawInput);
+    const start =  new Vector(0, 0);
+    const probes = [];
+    for (let x = 5; x <= 260; x++) {
+        for (let y = -120; y <= 200; y++) {
+            probes.push(new Probe(start, new Vector(x, y)));
+        }
+    }
+    // x=235..259, y=-118..-62
 
-    return;
+
+    const velocities = [];
+
+    for (let i = 0; i < probes.length; i++) {
+        const field = new Field(target)
+        field.simulate(probes[i]);
+        if (field.inTarget(probes[i])) {
+            velocities.push(probes[i].vStart);
+        }
+    }
+    await animate(probes, target);
+
+    return velocities.length;
 };
-
 run({
     part1: {
         tests: [
@@ -255,7 +271,7 @@ run({
     },
     part2: {
         tests: [
-            {input: `target area: x=20..30, y=-10..-5`, expected: 45},
+            // {input: `target area: x=20..30, y=-10..-5`, expected: 112},
         ],
         solution: part2,
     },
