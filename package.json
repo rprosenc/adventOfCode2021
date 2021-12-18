@@ -18,7 +18,8 @@
     "prettier": "^2.4.1"
   },
   "dependencies": {
-    "chalk": "^5.0.0"
+    "chalk": "^5.0.0",
+    "javascript-astar": "^0.4.1"
   },
   "engines": {
     "node": ">=16.0.0"
