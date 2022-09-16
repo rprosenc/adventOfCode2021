@@ -48,6 +48,10 @@ _Click a badge to go to the specific day._
 ```
 npm i
 ```
+Add your AoC session key to the `.env` file (you can find it in cookie file when you sign in at [adventofcode.com](https://adventofcode.com/)) _(optional)_
+```
+AOC_SESSION_KEY=XXXXXXXXXXXXXXXXXXXX
+```
 
 ## Running in dev mode
 
